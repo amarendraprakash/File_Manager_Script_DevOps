@@ -1,0 +1,49 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the code
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Validate the script
+    - name: Validate Bash Script
+      run: |
+        echo "Validating file_manager_script.sh"
+        bash -n file_manager_script.sh
+
+    # Execute tests
+    - name: Run Script Tests
+      run: |
+        chmod +x file_manager_script.sh
+        ./file_manager_script.sh <<EOF
+        6
+        EOF
+
+  deploy:
+    name: Deploy to Production
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Deploy Script
+      run: |
+        echo "Deploying script..."
+        # Add your deployment logic here, e.g., copying to a server
+        scp file_manager_script.sh user@yourserver:/path/to/deploy/
