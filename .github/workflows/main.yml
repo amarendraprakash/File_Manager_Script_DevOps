@@ -18,11 +18,13 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    # Install ShellCheck for script validation
+    - name: Install ShellCheck
+      run: sudo apt-get install -y shellcheck
+
     # Validate the script
-    - name: Validate Bash Script
-      run: |
-        echo "Validating file_manager_script.sh"
-        bash -n file_manager_script.sh
+    - name: Validate Bash Script with ShellCheck
+      run: shellcheck file_manager_script.sh
 
     # Execute tests
     - name: Run Script Tests
@@ -42,8 +44,14 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    # Set up SSH key for deployment
+    - name: Set up SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+
     - name: Deploy Script
       run: |
         echo "Deploying script..."
-        # Add your deployment logic here, e.g., copying to a server
         scp file_manager_script.sh user@yourserver:/path/to/deploy/
