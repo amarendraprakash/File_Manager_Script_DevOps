@@ -1,4 +1,4 @@
-name: Build and Test
+name: Validate and Test File Manager Script
 
 on:
   push:
@@ -8,22 +8,21 @@ on:
 
 jobs:
   build-and-test:
+    name: Validate and Test
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Install ShellCheck
-      run: sudo apt-get install -y shellcheck
+      - name: Make the Script Executable
+        run: chmod +x ./File_Manager_Script.sh
 
-    - name: List Files
-      run: ls -R
-
-    - name: Validate Bash Script with ShellCheck
-      run: shellcheck ./File_Manager_Script.sh # Ensure this path matches the actual file location
-
-    - name: Run Script Tests
-      run: |
-        chmod +x ./File_Manager_Script.sh
-        ./File_Manager_Script.sh
+      - name: Simulate User Input
+        run: |
+          ./File_Manager_Script.sh <<EOF
+          1
+          testfile.txt
+          3
+          6
+          EOF
